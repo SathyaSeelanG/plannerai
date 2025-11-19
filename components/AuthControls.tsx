@@ -8,8 +8,8 @@ interface AuthControlsProps {
   className?: string;
 }
 
-export const AuthControls: React.FC<AuthControlsProps> = ({ 
-  onSaveToAccount, 
+export const AuthControls: React.FC<AuthControlsProps> = ({
+  onSaveToAccount,
   showSaveButton = false,
   className = ""
 }) => {
@@ -27,14 +27,14 @@ export const AuthControls: React.FC<AuthControlsProps> = ({
           {!isGuest ? (
             <>
               <SignInButton mode="modal">
-                <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                <button className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-hover transition-colors">
                   <LogIn size={16} />
                   Sign In
                 </button>
               </SignInButton>
-              <button 
+              <button
                 onClick={handleContinueAsGuest}
-                className="flex items-center gap-2 px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-hover transition-colors"
               >
                 <User size={16} />
                 Continue as Guest

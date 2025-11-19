@@ -21,9 +21,19 @@
         theme: {
           extend: {
             colors: {
-              primary: '#13c8ec',
-              'background-light': '#f6f8f8',
-              'background-dark': '#101f22',
+              primary: '#3b82f6', // Blue
+              'primary-hover': '#2563eb',
+              'background-light': '#ffffff',
+              'background-dark': '#0a0a0a', // Black/Very Dark Gray
+              'surface-dark': '#171717', // Slightly lighter for cards/sidebar
+              'border-dark': '#262626',
+              'text-main': '#000000',
+              'text-secondary': '#a1a1aa', // Medium Gray
+              'text-secondary-light': '#52525b',
+            },
+            backgroundImage: {
+              'dot-pattern': "radial-gradient(#e5e7eb 1px, transparent 1px)",
+              'dot-pattern-dark': "radial-gradient(#262626 1px, transparent 1px)",
             },
             fontFamily: {
               display: ['Lexend', 'sans-serif'],

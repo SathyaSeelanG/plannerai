@@ -13,7 +13,7 @@ export interface LearningResource {
 
 export interface Task {
   id: string;
-  title:string;
+  title: string;
   description: string;
   estimatedHours: number;
   status: TaskStatus;
@@ -38,6 +38,9 @@ export interface Roadmap {
   overallResources: LearningResource[];
   created_at?: string;
   user_id?: string;
+  experienceLevel?: string;
+  weeklyCommitment?: string;
+  existingSkills?: string;
 }
 
 export interface Stats {
@@ -49,12 +52,12 @@ export interface Stats {
 }
 
 export interface ChatMessage {
-    role: 'user' | 'model';
-    text: string;
+  role: 'user' | 'model';
+  text: string;
 }
 
 export interface User {
-    name: string;
-    email: string;
-    avatarUrl: string;
+  name: string;
+  email: string;
+  avatarUrl: string;
 }

@@ -15,8 +15,10 @@ const ChatBubble: React.FC<{ message: ChatMessage }> = ({ message }) => {
             )}
             <div className={`max-w-md rounded-lg px-4 py-3 ${isUser ? 'bg-primary text-[#111f22]' : 'bg-[#111f22]'}`}>
                 {/* A simple markdown parser for bold text */}
-                <p className="text-sm" dangerouslySetInnerHTML={{ __html: message.text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" class="text-primary underline">$1</a>') }} />
+                <p className="text-sm" dangerouslySetInnerHTML={{
+                    __html: (message.text || '').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                        .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" class="text-primary underline">$1</a>')
+                }} />
             </div>
         </div>
     );
@@ -25,12 +27,12 @@ const ChatBubble: React.FC<{ message: ChatMessage }> = ({ message }) => {
 const getSuggestedQuestions = (type: string | undefined, data: any): string[] => {
     switch (type) {
         case 'task':
-             return [
+            return [
                 "Explain this concept simply",
                 "Give me a real-world example",
                 "Find YouTube tutorials",
                 "Quiz me on this topic"
-             ];
+            ];
         case 'roadmap':
             return [
                 `Summarize the learning path`,
@@ -92,10 +94,10 @@ const AIChatSidebar: React.FC = () => {
             setTitle('Roadmap Creation Assistant');
             initialMessage = "Need help brainstorming your next learning goal? Just ask!";
         } else if (chatContext?.type === 'writeup') {
-             setTitle('Project Assistant');
-             initialMessage = "I can explain how this application was built. Ask away!";
+            setTitle('Project Assistant');
+            initialMessage = "I can explain how this application was built. Ask away!";
         } else {
-             setTitle("StudyFlow AI");
+            setTitle("StudyFlow AI");
         }
         setMessages([{ role: 'model', text: initialMessage }]);
         setSuggestedQuestions(getSuggestedQuestions(chatContext?.type, chatContext?.data));
@@ -111,7 +113,7 @@ const AIChatSidebar: React.FC = () => {
     const handleSend = async (textOverride?: string) => {
         const textToSend = textOverride || input;
         if (!textToSend.trim() || isLoading) return;
-        
+
         const userMessage: ChatMessage = { role: 'user', text: textToSend };
         const newMessages = [...messages, userMessage];
         setMessages(newMessages);
@@ -135,7 +137,7 @@ const AIChatSidebar: React.FC = () => {
         <div className={`fixed top-0 right-0 h-full bg-[#192f33] w-full lg:w-[400px] transition-transform duration-300 z-50 flex flex-col border-l border-[#325e67] shadow-2xl ${isChatOpen ? 'translate-x-0' : 'translate-x-full'}`}>
             <header className="p-4 border-b border-[#325e67] flex justify-between items-center flex-shrink-0">
                 <div className="flex items-center gap-3">
-                     <div className="size-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
+                    <div className="size-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
                         <span className="material-symbols-outlined text-[#111f22]">psychology</span>
                     </div>
                     <div className="overflow-hidden">
@@ -152,9 +154,9 @@ const AIChatSidebar: React.FC = () => {
                 {messages.map((msg, index) => (
                     <ChatBubble key={index} message={msg} />
                 ))}
-                 {isLoading && (
+                {isLoading && (
                     <div className="flex items-start gap-3">
-                         <div className="size-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
+                        <div className="size-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
                             <span className="material-symbols-outlined text-[#111f22]">psychology</span>
                         </div>
                         <div className="max-w-md rounded-lg px-4 py-3 bg-[#111f22] flex items-center gap-2">
@@ -164,7 +166,7 @@ const AIChatSidebar: React.FC = () => {
                         </div>
                     </div>
                 )}
-                
+
                 {/* Suggested Questions Area */}
                 {!isLoading && suggestedQuestions.length > 0 && (
                     <div className="mt-6 pt-4 border-t border-white/5">
@@ -198,7 +200,7 @@ const AIChatSidebar: React.FC = () => {
                         disabled={isLoading}
                     />
                     <button onClick={() => handleSend()} disabled={isLoading || !input.trim()} className="p-3 text-white disabled:text-gray-500 hover:text-primary disabled:hover:text-gray-500">
-                         <span className="material-symbols-outlined">send</span>
+                        <span className="material-symbols-outlined">send</span>
                     </button>
                 </div>
             </footer>
