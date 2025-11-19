@@ -4,20 +4,58 @@ import { ChatMessage } from '../types';
 import { getChatResponse } from '../services/geminiService';
 import { useAppContext } from '../context/AppContext';
 
+// A more robust markdown parser
+const parseMarkdown = (text: string) => {
+    let html = text
+        // escape html
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+
+    // Code blocks
+    html = html.replace(/```(\w*)\n([\s\S]*?)```/g,
+        '<pre class="bg-gray-800 rounded-md p-3 my-2 text-sm font-mono overflow-x-auto"><code class="language-$1">$2</code></pre>');
+
+    // Inline code
+    html = html.replace(/`([^`]+)`/g, '<code class="bg-gray-800 px-1.5 py-1 rounded-md font-mono text-sm">$1</code>');
+
+    // Bold
+    html = html.replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold">$1</strong>');
+
+    // Italic
+    html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
+
+    // Unordered lists
+    html = html.replace(/^\s*[-*]\s+(.*)/gm, '<ul class="list-disc list-inside my-1"><li>$1</li></ul>');
+    html = html.replace(/<\/ul>\n<ul class="list-disc list-inside my-1">/g, ''); // Merge consecutive lists
+
+    // Ordered lists
+    html = html.replace(/^\s*\d+\.\s+(.*)/gm, '<ol class="list-decimal list-inside my-1"><li>$1</li></ol>');
+    html = html.replace(/<\/ol>\n<ol class="list-decimal list-inside my-1">/g, ''); // Merge consecutive lists
+
+    // Links
+    html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline">$1</a>');
+    
+    // Newlines
+    html = html.replace(/\n/g, '<br />');
+    html = html.replace(/<br \/><(ul|ol|li|pre|code)/g, '<$1'); // fix extra space
+    html = html.replace(/<\/(ul|ol|pre|code)><br \/>/g, '</$1>'); // fix extra space
+
+    return html;
+};
+
+
 const ChatBubble: React.FC<{ message: ChatMessage }> = ({ message }) => {
     const isUser = message.role === 'user';
     return (
         <div className={`flex items-start gap-3 ${isUser ? 'justify-end' : ''}`}>
             {!isUser && (
                 <div className="size-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
-                    <span className="material-symbols-outlined text-[#111f22]">psychology</span>
+                    <span className="material-symbols-outlined text-primary-foreground">psychology</span>
                 </div>
             )}
-            <div className={`max-w-md rounded-lg px-4 py-3 ${isUser ? 'bg-primary text-[#111f22]' : 'bg-[#111f22]'}`}>
-                {/* A simple markdown parser for bold text */}
-                <p className="text-sm" dangerouslySetInnerHTML={{
-                    __html: (message.text || '').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                        .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" class="text-primary underline">$1</a>')
+            <div className={`max-w-lg rounded-lg px-4 py-2 ${isUser ? 'bg-primary text-primary-foreground' : 'bg-gray-800'}`}>
+                <div className="text-sm text-white" dangerouslySetInnerHTML={{
+                    __html: parseMarkdown(message.text || '')
                 }} />
             </div>
         </div>
@@ -134,32 +172,32 @@ const AIChatSidebar: React.FC = () => {
     };
 
     return (
-        <div className={`fixed top-0 right-0 h-full bg-[#192f33] w-full lg:w-[400px] transition-transform duration-300 z-50 flex flex-col border-l border-[#325e67] shadow-2xl ${isChatOpen ? 'translate-x-0' : 'translate-x-full'}`}>
-            <header className="p-4 border-b border-[#325e67] flex justify-between items-center flex-shrink-0">
+        <div className={`fixed top-0 right-0 h-full bg-gray-900/95 backdrop-blur-sm w-full lg:w-[450px] transition-transform duration-300 z-50 flex flex-col border-l border-white/10 shadow-2xl ${isChatOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+            <header className="p-5 border-b border-white/10 flex justify-between items-center flex-shrink-0">
                 <div className="flex items-center gap-3">
-                    <div className="size-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
-                        <span className="material-symbols-outlined text-[#111f22]">psychology</span>
+                    <div className="size-9 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
+                        <span className="material-symbols-outlined text-primary-foreground">psychology</span>
                     </div>
                     <div className="overflow-hidden">
-                        <h2 className="font-bold text-white">StudyFlow AI</h2>
-                        <p className="text-xs text-[#92c0c9] truncate max-w-[200px]">{title}</p>
+                        <h2 className="font-bold text-white text-lg">StudyFlow AI</h2>
+                        <p className="text-xs text-gray-400 truncate max-w-[250px]">{title}</p>
                     </div>
                 </div>
-                <button onClick={() => setIsChatOpen(false)} className="p-2 rounded-full hover:bg-[#234248]">
+                <button onClick={() => setIsChatOpen(false)} className="p-2 rounded-full hover:bg-white/10">
                     <span className="material-symbols-outlined text-white">close</span>
                 </button>
             </header>
 
-            <main className="flex-1 p-4 overflow-y-auto space-y-4">
+            <main className="flex-1 p-5 overflow-y-auto space-y-5">
                 {messages.map((msg, index) => (
                     <ChatBubble key={index} message={msg} />
                 ))}
                 {isLoading && (
                     <div className="flex items-start gap-3">
-                        <div className="size-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
-                            <span className="material-symbols-outlined text-[#111f22]">psychology</span>
+                        <div className="size-9 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
+                            <span className="material-symbols-outlined text-primary-foreground">psychology</span>
                         </div>
-                        <div className="max-w-md rounded-lg px-4 py-3 bg-[#111f22] flex items-center gap-2">
+                        <div className="max-w-md rounded-lg px-4 py-3 bg-gray-800 flex items-center gap-2">
                             <span className="w-2 h-2 bg-primary rounded-full animate-pulse"></span>
                             <span className="w-2 h-2 bg-primary rounded-full animate-pulse delay-75"></span>
                             <span className="w-2 h-2 bg-primary rounded-full animate-pulse delay-150"></span>
@@ -169,14 +207,14 @@ const AIChatSidebar: React.FC = () => {
 
                 {/* Suggested Questions Area */}
                 {!isLoading && suggestedQuestions.length > 0 && (
-                    <div className="mt-6 pt-4 border-t border-white/5">
-                        <p className="text-xs text-[#92c0c9] font-medium mb-3 ml-1 uppercase tracking-wider">Suggested Questions</p>
+                    <div className="mt-6 pt-4 border-t border-white/10">
+                        <p className="text-xs text-gray-400 font-medium mb-3 ml-1 uppercase tracking-wider">Suggestions</p>
                         <div className="flex flex-wrap gap-2">
                             {suggestedQuestions.map((q, i) => (
                                 <button
                                     key={i}
                                     onClick={() => handleSend(q)}
-                                    className="text-xs text-left text-white bg-[#234248] hover:bg-[#325e67] border border-[#325e67] px-3 py-2 rounded-lg transition-colors duration-200"
+                                    className="text-xs text-left text-white bg-white/5 hover:bg-white/10 border border-white/10 px-3 py-2 rounded-lg transition-colors duration-200"
                                 >
                                     {q}
                                 </button>
@@ -188,18 +226,18 @@ const AIChatSidebar: React.FC = () => {
                 <div ref={messagesEndRef} />
             </main>
 
-            <footer className="p-4 border-t border-[#325e67] flex-shrink-0">
-                <div className="flex items-center gap-2 bg-[#111f22] rounded-lg border border-[#325e67] focus-within:border-primary">
+            <footer className="p-5 border-t border-white/10 flex-shrink-0">
+                <div className="flex items-center gap-2 bg-gray-800 rounded-lg border border-white/10 focus-within:border-primary transition-colors">
                     <input
                         type="text"
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
                         onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-                        placeholder="Ask for links, tips..."
-                        className="flex-1 bg-transparent p-3 text-white placeholder:text-[#92c0c9] focus:outline-none"
+                        placeholder="Ask a follow-up question..."
+                        className="flex-1 bg-transparent p-3 text-white placeholder:text-gray-500 focus:outline-none"
                         disabled={isLoading}
                     />
-                    <button onClick={() => handleSend()} disabled={isLoading || !input.trim()} className="p-3 text-white disabled:text-gray-500 hover:text-primary disabled:hover:text-gray-500">
+                    <button onClick={() => handleSend()} disabled={isLoading || !input.trim()} className="p-3 text-white disabled:text-gray-600 hover:text-primary disabled:hover:text-gray-600 transition-colors">
                         <span className="material-symbols-outlined">send</span>
                     </button>
                 </div>

@@ -134,7 +134,7 @@ export const RoadmapView: React.FC = () => {
             <div className="mb-8">
                 <div className="flex justify-between items-start">
                     <div>
-                        <h1 className="text-4xl font-bold text-white">{roadmap.title}</h1>
+                        {/* <h1 className="text-2xl font-bold text-white">{roadmap.title}</h1> */}
                         <p className="text-text-secondary mt-2 max-w-3xl">{roadmap.description}</p>
                     </div>
                     <button
