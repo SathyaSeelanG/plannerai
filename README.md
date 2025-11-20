@@ -1,12 +1,8 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
 
 # AI-Powered Roadmap Planner
 
 A modern learning roadmap planner with AI-powered content generation and authentication support. Users can create personalized learning paths, track progress, and save their roadmaps either as guests (local storage) or to their accounts (database).
 
-View your app in AI Studio: https://ai.studio/apps/drive/1pnYMUJDAxCNitS0ntzPpgMZHSvd6vl1Q
 
 ## Features
 
